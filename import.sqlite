@@ -1,3 +1,5 @@
 .separator ,
-.import metric.csv metric
+.import tmp/metric.csv metric
+select * from metric;
 .quit
+
