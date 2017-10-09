@@ -1,5 +1,7 @@
 .separator ,
 .import tmp/metric.csv metric
 select * from metric;
+create table symbols (symbol);
+insert into symbols(symbol) select symbol from metric group by symbol;
 .quit
 
