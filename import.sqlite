@@ -1,7 +1,16 @@
 .separator ,
 .import tmp/metric.csv metric
-select * from metric;
+-- Create symbol table
 create table symbols (symbol);
 insert into symbols(symbol) select symbol from metric group by symbol;
+-- Calculate secundary statistics
+insert into metric select "AVG",symbol,"AVGNI",avg(value) from metric where metric = "NI" group by symbol;
+-- Calculate market value
+insert into metric select a.period,a.symbol, "MV", a.value * b.value from metric a, metric b where a.metric = "PRICE" and a.symbol = b.symbol and b.metric = "SO";
+-- Calculate PER
+insert into metric select a.period,a.symbol, "PER", a.value / b.value from metric a, metric b where a.metric = "MV" and a.symbol = b.symbol and b.metric = "AVGNI";
+insert into metric select a.period,a.symbol, "RENT", 100 * b.value / a.value from metric a, metric b where a.metric = "MV" and a.symbol = b.symbol and b.metric = "AVGNI";
+-- Show last result
+select * from metric;
 .quit
 
